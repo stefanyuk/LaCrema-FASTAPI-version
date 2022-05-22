@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  app :
+    build: .
+    image: restaurantservice:latest
+    ports:
+      - "8080:80"
+    depends_on:
+      - restaurant_db
+    environment:
+       LA_CREMA_DB_CONNECTION_STRING: "postgresql+asyncpg://lacrema:lacrema123@lacrema_db:5432/lacrema_db"
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:80/health || exit 1"]
+      interval: 1m
+      timeout: 5s
+      retries: 3
+
+  lacrema_db:
+    image: postgres:14.2
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: "lacrema_db"
+      POSTGRES_USER: "lacrema"
+      POSTGRES_PASSWORD: "lacrema123"
+    volumes:
+      - data-volume:/var/lib/postgresql/data
+
+volumes:
+  data-volume:
