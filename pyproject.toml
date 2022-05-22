@@ -34,6 +34,19 @@ requests = "^2.27.1"
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.poe.tasks]
+test.cmd = "pytest --cov=updateservice tests"
+test.env = {LA_CREMA_DB_CONNECTION_STRING = "postgresql+asyncpg://lacrema:lacrema123@lacrema_db:5432/lacrema_db"}
+
+api_test.cmd = "pytest api_tests/"
+api_test.env = {LA_CREMA_DB_CONNECTION_STRING = "postgresql+asyncpg://lacrema:lacrema123@localhost:5432/lacrema_db"}
+
+start.cmd = "docker-compose up"
+stop.cmd = "docker-compose down"
+
+lint = "pylint updateservice tests api_tests"
+
+
 [tool.isort]
 profile = "black"
 src_paths = ["restaurantservice", "tests", "api_tests"]

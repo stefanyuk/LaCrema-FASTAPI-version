@@ -4,8 +4,11 @@ This module initializes FastApi application.
 
 from fastapi import FastAPI
 
+from restaurantservice.apis import healthcheck
+
 
 def _register_api_handlers(app: FastAPI) -> FastAPI:
+    app.include_router(healthcheck.router)
     return app
 
 

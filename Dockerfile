@@ -14,8 +14,8 @@ RUN apk update \
     && apk add libffi-dev build-base curl \
     && curl -sSL https://install.python-poetry.org | python3 - \
     # Simulate the restaurantservice package, so poetry can install all the dependencies.
-    && mkdir /app/updateservice \
-    && touch /app/updateservice/__init__.py
+    && mkdir /app/restaurantservice \
+    && touch /app/restaurantservice/__init__.py
 
 COPY pyproject.toml poetry.lock /app/
 RUN ${POETRY_HOME}/bin/poetry install --no-dev
@@ -39,4 +39,4 @@ COPY ./ /app
 
 EXPOSE 80
 
-CMD [ "/opt/poetry/bin/poetry", "run", "uvicorn", "updateservice.app:app", "--host", "0.0.0.0", "--port", "80" ]
+CMD [ "/opt/poetry/bin/poetry", "run", "uvicorn", "restaurantservice.app:app", "--host", "0.0.0.0", "--port", "80" ]

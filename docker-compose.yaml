@@ -7,7 +7,7 @@ services:
     ports:
       - "8080:80"
     depends_on:
-      - restaurant_db
+      - lacrema_db
     environment:
        LA_CREMA_DB_CONNECTION_STRING: "postgresql+asyncpg://lacrema:lacrema123@lacrema_db:5432/lacrema_db"
     healthcheck:
