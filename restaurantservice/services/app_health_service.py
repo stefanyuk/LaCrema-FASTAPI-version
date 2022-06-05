@@ -20,6 +20,7 @@ class AppHealthService(AbstractService):
             return await self.entity_repository.ping_db()
         except DatabaseNotReachableError:
             self._handle_db_not_reachable_error()
+            print(2)
 
     @staticmethod
     def _handle_db_not_reachable_error():

@@ -38,6 +38,7 @@ class SQLAlchemyRepository(AbstractRepository):
             return await self._db_session.execute(self.DB_CHECK_QUERY)
         except Exception:  # pylint: disable=broad-except
             self._handle_db_error()
+            print(3)
 
     @staticmethod
     def _handle_db_error():
