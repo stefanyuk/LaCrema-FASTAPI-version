@@ -16,7 +16,7 @@ class AppSettings(BaseSettings):
 
     host = Field("127.0.0.1")
     port = Field("8080")
-    db_connection_string: str
+    db_connection_string: str = "sqlite+aiosqlite:///test.db"
 
     class Config:
         """Class representing Pydantic configuration."""
