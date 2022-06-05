@@ -26,3 +26,4 @@ async def create_all_tables():
     meta = BaseModel.metadata
     async with engine.begin() as conn:
         await conn.run_sync(meta.drop_all)
+        await conn.run_sync(meta.create_all)
