@@ -13,7 +13,7 @@ class DatabaseNotReachableError(RepositoryBaseError):
     """Raised in case when database is not reachable."""
 
 
-class EntityIsNotUnique(RepositoryBaseError):
+class EntityIsNotUniq(RepositoryBaseError):
     """Raised when try to create entity that is not unique."""
 
     entity: BaseModel

@@ -31,13 +31,13 @@ class User(BaseModel):
     )
 
     @property
-    def password(self):
+    def password_2(self):
         raise AttributeError("password is not a readable attribute")
 
-    @password.setter
-    def password(self, password):
+    @password_2.setter
+    def password_2(self, password):
         self.password_hash = get_password_hash(password)
 
-    def verify_password(self, password):
+    def verify_password_2(self, password):
         """Verify whether provided password matches the hash saved in db."""
         return verify_password(password, self.password_hash)

@@ -42,10 +42,13 @@ class UserService(AbstractService):
 
         return user_instance
 
+    def test_func(self):
+        pass
+
     @staticmethod
     def _create_user_instance(**kwargs) -> User:
         return User(**kwargs)
 
     @staticmethod
     def _handle_entity_is_no_unique_error(error):
-        raise UserAlreadyExists(error.entity)
+        raise UserAlreadyExists(error.entity, 2)

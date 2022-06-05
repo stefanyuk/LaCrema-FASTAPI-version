@@ -14,6 +14,7 @@ class AppIsNotHealthyError(ServiceBaseError):
 class UserAlreadyExists(ServiceBaseError):
     """Raised in case when user with the provided attributes already exists."""
 
-    def __init__(self, user_model, *args, **kwargs):
+    def __init__(self, user_model, something, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user_model = user_model
+        self.something = something
