@@ -18,6 +18,15 @@ class EntityIsNotUnique(RepositoryBaseError):
 
     entity: BaseModel
 
-    def __init__(self, entity, *args, **kwargs):
+    def __init__(self, entity, detail, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.entity = entity
+        self.detail = detail
+
+
+class EntityDoesNotExist(RepositoryBaseError):
+    """Raised when try to retrieve entity that does not exist."""
+
+    def __init__(self, detail, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.detail = detail

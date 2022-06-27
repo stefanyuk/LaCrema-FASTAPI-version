@@ -16,12 +16,10 @@ class AppSettings(BaseSettings):
 
     host = Field("127.0.0.1")
     port = Field("8080")
-    db_connection_string: str = "sqlite+aiosqlite:///test.db"
+    db_connection_string: str = "postgresql+asyncpg://stefa:1234@localhost:5432/stefa"
 
     class Config:
         """Class representing Pydantic configuration."""
-
-        env_prefix = "la_crema_"
 
 
 @lru_cache()

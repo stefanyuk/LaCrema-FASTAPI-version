@@ -3,14 +3,14 @@ This module implements SQLAlchemy repository class that is used to access the da
 """
 
 from fastapi import Depends
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy import select
+from sqlalchemy.engine import Result
+from sqlalchemy.exc import IntegrityError, NoResultFound
 
-from restaurantservice.database import get_session
-from restaurantservice.repositories.errors import DatabaseNotReachableError
-
+from ..database import get_session
 from ..models.base_model import BaseModel
 from .abstract_reposiitory import AbstractRepository
-from .errors import EntityIsNotUnique
+from .errors import DatabaseNotReachableError, EntityDoesNotExist, EntityIsNotUnique
 
 
 class SQLAlchemyRepository(AbstractRepository):
@@ -32,6 +32,19 @@ class SQLAlchemyRepository(AbstractRepository):
 
         return entity
 
+    async def get_by_id(self, entity_model: BaseModel, entity_id: int):
+        stmt = select(entity_model).where(entity_model.id == entity_id)
+        query = await self._db_session.execute(stmt)
+        return self._extract_one_entity(query)
+
+    def _extract_one_entity(self, query_result: Result):
+        try:
+            entity = query_result.scalar_one()
+        except NoResultFound as err:
+            self._handle_no_result_found_error(err)
+
+        return entity
+
     async def ping_db(self):
         """Execute a simple check query to db."""
         try:
@@ -43,8 +56,17 @@ class SQLAlchemyRepository(AbstractRepository):
     def _handle_db_error():
         raise DatabaseNotReachableError
 
-    @staticmethod
-    def _handle_integrity_error(error, entity):
+    def _handle_integrity_error(self, error, entity):
         for error_arg in error.args:
-            if "UNIQUE constraint failed" in error_arg:
-                raise EntityIsNotUnique(entity)
+            if "duplicate key value violates unique constraint" in error_arg:
+                error_detail = self._find_error_detail(error_arg)
+                raise EntityIsNotUnique(entity, error_detail)
+
+    def _handle_no_result_found_error(self, error):
+        error_args = error.args[0]
+        error_detail = self._find_error_detail(error_args)
+        raise EntityDoesNotExist(detail=error_detail)
+
+    @staticmethod
+    def _find_error_detail(error_argument):
+        return error_argument[error_argument.find("Key") :]

@@ -21,8 +21,8 @@ class UserService(AbstractService):
         first_name: str,
         last_name: str,
         password: str,
-        is_admin: bool,
-        is_employee: bool,
+        is_admin: bool = False,
+        is_employee: bool = False,
     ):
         """Create new user entity."""
         user_instance = self._create_user_instance(
@@ -38,14 +38,18 @@ class UserService(AbstractService):
         try:
             await self.entity_repository.create(user_instance)
         except EntityIsNotUnique as err:
-            self._handle_entity_is_no_unique_error(err)
+            self._handle_entity_is_not_unique_error(err)
 
         return user_instance
+
+    async def get_user(self, user_id: int):
+        user = await self.entity_repository.get_by_id(User, user_id)
+        return user
 
     @staticmethod
     def _create_user_instance(**kwargs) -> User:
         return User(**kwargs)
 
     @staticmethod
-    def _handle_entity_is_no_unique_error(error):
-        raise UserAlreadyExists(error.entity)
+    def _handle_entity_is_not_unique_error(error):
+        raise UserAlreadyExists(error.entity, error.detail)

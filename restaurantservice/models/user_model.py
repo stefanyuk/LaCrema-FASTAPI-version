@@ -12,14 +12,14 @@ class User(BaseModel):
 
     __tablename__ = "user"
 
-    user_id = sqla.Column(sqla.Integer, primary_key=True)
+    id = sqla.Column(sqla.Integer, primary_key=True)
     username = sqla.Column(sqla.String(255), nullable=False, unique=True)
     password_hash = sqla.Column(sqla.String(255), nullable=False)
     first_name = sqla.Column(sqla.String(255), nullable=False)
     last_name = sqla.Column(sqla.String(255), nullable=False)
     email = sqla.Column(sqla.String(255), nullable=False, unique=True)
-    last_login_date = sqla.Column(sqla.Date)
-    registered_on = sqla.Column(sqla.Date, nullable=False, default=datetime.utcnow())
+    last_login_date = sqla.Column(sqla.Date, nullable=True)
+    registered_on = sqla.Column(sqla.Date, nullable=False, default=datetime.utcnow)
     is_admin = sqla.Column(sqla.Boolean, nullable=False)
     is_employee = sqla.Column(sqla.Boolean, nullable=False)
     employee = relationship(
