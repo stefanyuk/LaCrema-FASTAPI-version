@@ -26,3 +26,15 @@ class UserDoesNotExist(ServiceBaseError):
     def __init__(self, user_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user_id = user_id
+
+
+class TokenDoesNotExist(ServiceBaseError):
+    """Raised in case when token with the provided id does not exist."""
+
+    def __init__(self, token_id, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.token_id = token_id
+
+
+class InvalidToken(ServiceBaseError):
+    """Raised in case when token is not valid."""

@@ -4,18 +4,11 @@ The module contains helper functions and utilities needed for API.
 
 from typing import Any
 
-from passlib.context import CryptContext
+from jose import jwt
 from pydantic.utils import GetterDict
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
-
-
-def get_password_hash(password):
-    return pwd_context.hash(password)
+from ..apis.token_backend import JWTTokenBackend
+from ..settings import get_settings
 
 
 class UserGetter(GetterDict):
@@ -24,5 +17,18 @@ class UserGetter(GetterDict):
     def get(self, key: Any, default: Any = None) -> Any:
         """Provides a dictionary-like interface to serialize User model."""
         if key == "user":
+            return self._obj
+        return super().get(key, default)
+
+
+class TokenGetter(GetterDict):
+    """A class for serializing Token model."""
+
+    def get(self, key: Any, default: Any = None) -> Any:
+        """Provides a dictionary-like interface to serialize Token model."""
+        if key == "access-token":
+            jwt_backend = JWTTokenBackend(jwt, get_settings().secret_key)
+            return jwt_backend.create_api_token(self._obj)
+        if key == "token":
             return self._obj
         return super().get(key, default)

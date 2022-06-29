@@ -5,7 +5,7 @@ import uvicorn
 from fastapi import FastAPI
 
 from restaurantservice.apis import healthcheck, user_api
-from restaurantservice.database import create_all_tables
+from restaurantservice.database import create_admin_user, create_all_tables
 
 
 def _register_api_handlers(app: FastAPI) -> FastAPI:
@@ -22,11 +22,6 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
-
-
-@app.on_event("startup")
-async def startup():
-    await create_all_tables()
 
 
 if __name__ == "__main__":

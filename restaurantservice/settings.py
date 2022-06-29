@@ -17,6 +17,7 @@ class AppSettings(BaseSettings):
     host = Field("127.0.0.1")
     port = Field("8080")
     db_connection_string: str = "postgresql+asyncpg://stefa:1234@localhost:5432/stefa"
+    secret_key: str = "secret"
 
     class Config:
         """Class representing Pydantic configuration."""
