@@ -93,6 +93,26 @@ class UserService(AbstractService):
         await self.entity_repository.update(user)
         return user
 
+    async def update_user_info(self, user: User, **kwargs):
+        """Update user information.
+
+        :param user: user instance that should be updated
+        :param kwargs: dict, contains new information about user as key (user attr) value (new value) pair
+        :raises UserAlreadyExists: when with provided values already exists
+        """
+        for key, value in kwargs.items():
+            if value is not None:
+                setattr(user, key, value)
+
+        try:
+            await self.entity_repository.update(user)
+        except EntityIsNotUnique as err:
+            self._handle_entity_is_not_unique_error(err)
+
+    async def find_users(self):
+        """Retrieve and return list of all users."""
+        return await self.entity_repository.list(User)
+
     @staticmethod
     def _create_user_instance(**kwargs) -> User:
         return User(**kwargs)

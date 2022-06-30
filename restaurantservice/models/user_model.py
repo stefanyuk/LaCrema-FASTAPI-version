@@ -28,7 +28,7 @@ class User(BaseModel):
     email = sqla.Column(sqla.String(255), nullable=False, unique=True)
     last_login = sqla.Column(sqla.Date, nullable=True)
     registered_on = sqla.Column(sqla.Date, nullable=False, default=datetime.utcnow)
-    is_admin = sqla.Column(sqla.Boolean, nullable=False)
+    is_admin = sqla.Column(sqla.Boolean, default=False)
     is_employee = sqla.Column(sqla.Boolean, default=False)
     employee = sqla.orm.relationship(
         "EmployeeInfo",

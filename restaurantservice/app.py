@@ -1,16 +1,17 @@
 """
 This module initializes FastApi application.
 """
+
 import uvicorn
 from fastapi import FastAPI
 
 from restaurantservice.apis import healthcheck, user_api
-from restaurantservice.database import create_admin_user, create_all_tables
 
 
 def _register_api_handlers(app: FastAPI) -> FastAPI:
     app.include_router(healthcheck.router)
     app.include_router(user_api.router)
+    app.include_router(user_api.me_router)
     return app
 
 

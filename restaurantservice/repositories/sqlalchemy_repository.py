@@ -56,6 +56,12 @@ class SQLAlchemyRepository(AbstractRepository):
 
         return entity
 
+    async def list(self, entity_model):
+        """Return collection of entities or empty list if no row was found."""
+        query = select(entity_model)
+        result = await self._db_session.execute(query)
+        return result.unique().scalars().all()
+
     async def update(self, entity_to_update: BaseModel):
         """Update provided entity and commit changes to database."""
         self._db_session.add(entity_to_update)

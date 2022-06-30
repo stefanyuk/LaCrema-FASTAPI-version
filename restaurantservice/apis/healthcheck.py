@@ -9,7 +9,7 @@ from ..repositories.sqlalchemy_repository import SQLAlchemyRepository
 from ..services.app_health_service import AppHealthService
 from ..services.errors import AppIsNotHealthyError
 
-router = APIRouter()
+router = APIRouter(tags=["healthcheck"])
 
 
 @router.get("/health")
