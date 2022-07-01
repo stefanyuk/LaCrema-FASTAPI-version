@@ -19,6 +19,9 @@ SQLAlchemy = "^1.4.36"
 requests = "^2.27.1"
 httpx = "^0.22.0"
 python-jose = "^3.3.0"
+alembic = "^1.8.0"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+email-validator = "^1.2.1"
 
 
 [tool.poetry.dev-dependencies]
@@ -30,25 +33,50 @@ poethepoet = "^0.13.1"
 pytest-cov = "^3.0.0"
 pytest-asyncio = "^0.18.3"
 requests = "^2.27.1"
-passlib = {extras = ["bcrypt"], version = "^1.7.4"}
-email-validator = "^1.2.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poe.tasks]
-test.cmd = "pytest --cov=updateservice tests"
+test.cmd = "pytest --cov=restaurantservice tests"
 test.env = {LA_CREMA_DB_CONNECTION_STRING = "postgresql+asyncpg://lacrema:lacrema123@lacrema_db:5432/lacrema_db"}
 
-api_test.cmd = "pytest api_tests/"
-api_test.env = {LA_CREMA_DB_CONNECTION_STRING = "postgresql+asyncpg://lacrema:lacrema123@localhost:5432/lacrema_db"}
+api_test.sequence = [
+  { cmd =  "docker-compose -f docker-compose.api-test.yaml --env-file .env.local.api_test up -d" },
+  { cmd = "pytest api_tests/ --cov=restaurantservice" },
+]
+api_test.envfile = ".env.local.api_test"
 
-start.cmd = "docker-compose up"
-stop.cmd = "docker-compose down"
+lint = "pylint restaurantservice tests api_tests"
 
-lint = "pylint updateservice tests api_tests"
+[tool.poe.tasks.start]
+cmd = "docker-compose --env-file .env.local up"
+help = "starts the app locally inside the container"
 
+[tool.poe.tasks.stop]
+cmd = "docker-compose down"
+help = "stops the app running inside the container"
+
+
+[tool.poe.tasks.build_image]
+cmd = "docker-compose build"
+help = "Build latest app image"
+
+[tool.poe.tasks.upgrade_db]
+cmd = "alembic upgrade head"
+help = "apply all existing migration"
+envfile = ".env.local.migrations"
+
+[tool.poe.tasks.create_migration]
+cmd = "alembic revision --autogenerate -m"
+help = "create a new migration file, add string name"
+envfile = ".env.local.migrations"
+
+[tool.poe.tasks.downgrade_db]
+cmd = "alembic downgrade"
+help = "downgrade existing migration to previous migration or base"
+envfile = ".env.local.migrations"
 
 [tool.isort]
 profile = "black"

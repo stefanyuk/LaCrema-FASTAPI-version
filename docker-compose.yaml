@@ -1,15 +1,28 @@
 version: "3.8"
 
 services:
+  db_migrations:
+    build: .
+    image: restaurantservice:latest
+    command: [ "sh", "-c", "/opt/poetry/bin/poetry run alembic upgrade head" ]
+    environment:
+      LA_CREMA_DB_CONNECTION_STRING: ${LA_CREMA_DB_CONNECTION_STRING}
+    depends_on:
+      - lacrema_db
+    volumes:
+      - ./:/app
+
   app :
     build: .
     image: restaurantservice:latest
     ports:
       - "8080:80"
     depends_on:
-      - lacrema_db
+      db_migrations:
+        condition: "service_completed_successfully"
     environment:
-       LA_CREMA_DB_CONNECTION_STRING: "postgresql+asyncpg://lacrema:lacrema123@lacrema_db:5432/lacrema_db"
+       LA_CREMA_DB_CONNECTION_STRING: ${LA_CREMA_DB_CONNECTION_STRING}
+       LA_CREMA_SECRET_KEY: ${LA_CREMA_SECRET_KEY}
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:80/health || exit 1"]
       interval: 1m
@@ -21,9 +34,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: "lacrema_db"
-      POSTGRES_USER: "lacrema"
-      POSTGRES_PASSWORD: "lacrema123"
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - data-volume:/var/lib/postgresql/data
 

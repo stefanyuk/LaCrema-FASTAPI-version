@@ -5,7 +5,6 @@ Functions:
     get_settings () -> AppSettings
 """
 
-
 from functools import lru_cache
 
 from pydantic import BaseSettings, Field
@@ -16,11 +15,14 @@ class AppSettings(BaseSettings):
 
     host = Field("127.0.0.1")
     port = Field("8080")
-    db_connection_string: str = "postgresql+asyncpg://stefa:1234@localhost:5432/stefa"
-    secret_key: str = "secret"
+    db_connection_string: str
+    secret_key: str
 
     class Config:
         """Class representing Pydantic configuration."""
+
+        env_prefix = "la_crema_"
+        env_file = ".env.local"
 
 
 @lru_cache()
